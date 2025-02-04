@@ -1,10 +1,30 @@
 {% extends "users/base.html" %}
 
-{% block title %}Staff Dashboard{% endblock %}
-
 {% block content %}
-    <h1>Staff Dashboard</h1>
-    <a href="{% url 'create_chapter' %}">
-        <button>Create Chapter</button>
-    </a>
+<div class="container mt-4">
+    <!-- Dashboard Image -->
+    <div class="text-center mb-4">
+        <img src="https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/staff%20dash.png?raw=true" 
+             alt="Staff Dashboard" class="img-fluid rounded shadow-lg">
+    </div>
+
+
+    <!-- Create Chapter Section -->
+    <div class="card shadow p-4 mb-4">
+        <h3 class="text-primary">📖 Add a Chapter</h3>
+        <p class="text-muted">
+            Extend your existing courses by adding detailed chapters with content and quizzes.
+        </p>
+        <a href="{% url 'create_chapter' %}" class="btn btn-info btn-lg">Create Chapter</a>
+    </div>
+
+    <!-- Create Job Listing Section -->
+    <div class="card shadow p-4">
+        <h3 class="text-primary">💼 Post a Job</h3>
+        <p class="text-muted">
+            Looking for talent? Post job openings and connect with potential candidates.
+        </p>
+        <a href="{% url 'create_job' %}" class="btn btn-warning btn-lg">Create Job Listing</a>
+    </div>
+</div>
 {% endblock %}

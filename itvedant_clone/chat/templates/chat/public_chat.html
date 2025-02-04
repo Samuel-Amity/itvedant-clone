@@ -1,18 +1,26 @@
 {% extends 'users/base.html' %}
-{% block content %}
-<h2>Public Chat</h2>
-<div id="chat-box">
-    {% for message in messages %}
-        <div class="message">
-            <strong>{{ message.user.username }}:</strong> {{ message.message }} <br>
-            <small>{{ message.timestamp }}</small>
-        </div>
-    {% endfor %}
-</div>
 
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="message" required></textarea>
-    <button type="submit">Send</button>
-</form>
+{% block content %}
+    <!-- Banner Image -->
+    <div class="chat-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/chat%20banner.jpg?raw=true'); background-size: cover; background-position: center; height: 250px;">
+    </div>
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Public Chat</h2>
+
+        <div id="chat-box" class="border p-3 mb-4" style="max-height: 400px; overflow-y: auto;">
+            {% for message in messages %}
+                <div class="message mb-3">
+                    <strong>{{ message.user.username }}:</strong> {{ message.message }} <br>
+                    <small class="text-muted">{{ message.timestamp }}</small>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="message" required class="form-control mb-3" rows="4" placeholder="Type your message..."></textarea>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
 {% endblock %}

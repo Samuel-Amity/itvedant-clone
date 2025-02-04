@@ -1,18 +1,32 @@
 {% extends "users/base.html" %}
 
 {% block content %}
-<h1>Create Job Listing</h1>
-<form method="POST">
-    {% csrf_token %}
-    <label>Title:</label>
-    <input type="text" name="title" required><br>
-    
-    <label>Description:</label>
-    <textarea name="description" required></textarea><br>
-    
-    <label>Requirements:</label>
-    <textarea name="requirements" required></textarea><br>
-    
-    <button type="submit">Post Job</button>
-</form>
+    <!-- Banner Image -->
+    <div class="job-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/job%20banner2.jpg?raw=true'); background-size: cover; background-position: center; height: 250px;">
+    </div>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Create Job Listing</h1>
+        <form method="POST" class="job-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea name="description" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="requirements" class="form-label">Requirements:</label>
+                <textarea name="requirements" class="form-control" required></textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Post Job</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

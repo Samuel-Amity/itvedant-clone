@@ -1,13 +1,16 @@
 {% extends "users/base.html" %}
 
 {% block content %}
+<div class="chat-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/course%20banner2.jpeg?raw=true'); background-size: cover; background-position: center; height: 250px;"></div>
+<div class="container mt-4">
     <!-- ✅ Success Messages -->
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         {% endfor %}
     </div>
     <script>
@@ -17,37 +20,37 @@
     </script>
     {% endif %}
 
-    <h1>{{ course.title }}</h1>
-    <p>{{ course.description }}</p>
+    <h1 class="text-center mb-4">{{ course.title }}</h1>
+    <p class="lead text-center">{{ course.description }}</p>
 
-    <h2>Chapters</h2>
+    <h2 class="mt-4">Chapters</h2>
 
     {% for chapter in chapters %}
-    <div>
-        <button class="chapter-button" onclick="toggleDropdown('{{ chapter.id }}')">
+    <div class="mb-4">
+        <button class="btn btn-primary w-100 mb-2 chapter-button" onclick="toggleDropdown('{{ chapter.id }}')">
             {{ chapter.title }}
         </button>
         <div id="dropdown-{{ chapter.id }}" class="chapter-content" style="display: none;">
             <p>{{ chapter.content }}</p>
-            <h3>Question: {{ chapter.question }}</h3>
+            <h3 class="text-info">Question: {{ chapter.question }}</h3>
 
             <form method="POST" class="answer-form" data-chapter-id="{{ chapter.id }}">
                 {% csrf_token %}
-                <label for="user_answer_{{ chapter.id }}">Your Answer:</label>
-                <input type="text" id="user_answer_{{ chapter.id }}" name="user_answer" required>
-                <button type="submit" class="btn">Submit</button>
+                <label for="user_answer_{{ chapter.id }}" class="form-label">Your Answer:</label>
+                <input type="text" id="user_answer_{{ chapter.id }}" name="user_answer" class="form-control mb-2" required>
+                <button type="submit" class="btn btn-success w-100">Submit Answer</button>
             </form>
 
-            <div id="feedback-{{ chapter.id }}" class="feedback"></div> <!-- Feedback section -->
+            <div id="feedback-{{ chapter.id }}" class="feedback mt-2"></div> <!-- Feedback section -->
 
             {% if chapter.hint %}
-            <p><strong>Hint:</strong> {{ chapter.hint }}</p>
+            <p class="mt-2"><strong>Hint:</strong> {{ chapter.hint }}</p>
             {% endif %}
 
             <!-- ✅ Mark as Done Button -->
             <form method="POST" action="{% url 'mark_chapter_complete' chapter.id %}">
                 {% csrf_token %}
-                <button type="submit" class="btn-done">Mark as Done</button>
+                <button type="submit" class="btn btn-info w-100 mt-3">Mark as Done</button>
             </form>
         </div>
     </div>
@@ -89,4 +92,5 @@
             });
         });
     </script>
+</div>
 {% endblock %}

@@ -1,19 +1,25 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-    <div>
-        <button id="start-chat-btn">Start Chat</button>
+    <!-- Banner Image -->
+    <div class="chat-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/chat%20banner2.jpeg?raw=true'); background-size: cover; background-position: center; height: 250px;">
+    </div>
 
-        <div id="staff-list" style="display: none;">
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Start a Chat</h2>
+        
+        <button id="start-chat-btn" class="btn btn-primary">Start Chat</button>
+
+        <div id="staff-list" style="display: none;" class="mt-4">
             <form method="POST">
                 {% csrf_token %}
                 <h3>Select Staff Member</h3>
-                <select name="staff_id">
+                <select name="staff_id" class="form-control mb-3">
                     {% for staff in staff_list %}
                         <option value="{{ staff.id }}">{{ staff.username }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit">Start Chat</button>
+                <button type="submit" class="btn btn-success">Start Chat</button>
             </form>
         </div>
     </div>

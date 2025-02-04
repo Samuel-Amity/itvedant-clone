@@ -1,22 +1,29 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-    <h3>Chat with {{ chat_session.staff.username }}</h3>
-    
-    <div id="chat-box">
-        {% for message in messages %}
-            <div class="message">
-                <strong>{{ message.sender.username }}:</strong> {{ message.message }}
-                <span class="timestamp">{{ message.timestamp }}</span>
-            </div>
-        {% empty %}
-            <p>No messages yet.</p>
-        {% endfor %}
+    <!-- Banner Image -->
+    <div class="chat-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/chat%20banner2.jpeg?raw=true'); background-size: cover; background-position: center; height: 250px;">
     </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <textarea name="message" placeholder="Type your message..." rows="4"></textarea>
-        <button type="submit">Send</button>
-    </form>
+    <div class="container mt-4">
+        <h3 class="text-center mb-4">Chat with {{ chat_session.staff.username }}</h3>
+        
+        <div id="chat-box" class="border p-3 mb-3" style="max-height: 400px; overflow-y: scroll;">
+            {% for message in messages %}
+                <div class="message mb-2">
+                    <strong>{{ message.sender.username }}:</strong> {{ message.message }}
+                    <br>
+                    <small class="text-muted">{{ message.timestamp }}</small>
+                </div>
+            {% empty %}
+                <p>No messages yet.</p>
+            {% endfor %}
+        </div>
+
+        <form method="POST" class="mt-4">
+            {% csrf_token %}
+            <textarea name="message" placeholder="Type your message..." rows="4" class="form-control mb-3"></textarea>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
 {% endblock %}

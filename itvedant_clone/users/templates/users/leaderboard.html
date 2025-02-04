@@ -1,25 +1,29 @@
 {% extends "users/base.html" %}
 
 {% block content %}
+<div class="chat-banner" style="background-image: url('https://bookmachine.org/wp-content/uploads/2022/04/Blog-Post-banner-2-May-2022.png'); background-size: cover; background-position: center; height: 250px;"></div>
 <div class="container mt-4">
-    <h2 class="text-center">🏆 Leaderboard 🏆</h2>
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Chapters Completed</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in leaderboard %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.total_completed }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary fw-bold">🏆 Leaderboard 🏆</h2>
+
+        <table class="table table-hover mt-3 text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Chapters Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in leaderboard %}
+                <tr class="{% if forloop.first %}table-warning{% elif forloop.counter == 2 %}table-secondary{% elif forloop.counter == 3 %}table-light{% endif %}">
+                    <td class="fw-bold">{{ forloop.counter }}</td>
+                    <td class="fw-semibold">{{ user.username }}</td>
+                    <td>{{ user.total_completed }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

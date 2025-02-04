@@ -1,20 +1,28 @@
 {% extends "users/base.html" %}
 
 {% block content %}
-<h1>Job Openings</h1>
-{% for job in jobs %}
-    <div>
-        <h3>{{ job.title }}</h3>
-        <p>{{ job.description }}</p>
-        <p><strong>Requirements:</strong> {{ job.requirements }}</p>
-        {% if job.id in applied_jobs %}
-            <button disabled>Applied ✅</button>
-        {% else %}
-            <form method="POST" action="{% url 'apply_job' job.id %}">
-                {% csrf_token %}
-                <button type="submit">Apply</button>
-            </form>
-        {% endif %}
+    <!-- Banner Image -->
+    <div class="job-banner" style="background-image: url('https://github.com/Samuel-Amity/itvedant-clone/blob/main/images/job%20banner.jpg?raw=true'); background-size: cover; background-position: center; height: 250px;">
     </div>
-{% endfor %}
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Job Openings</h1>
+
+        {% for job in jobs %}
+            <div class="job-listing mb-4 p-4 border rounded">
+                <h3>{{ job.title }}</h3>
+                <p>{{ job.description }}</p>
+                <p><strong>Requirements:</strong> {{ job.requirements }}</p>
+
+                {% if job.id in applied_jobs %}
+                    <button class="btn btn-secondary" disabled>Applied ✅</button>
+                {% else %}
+                    <form method="POST" action="{% url 'apply_job' job.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -73,36 +73,97 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
+            z-index: 999;
         }
+    
         #chatbot-btn {
             background-color: #007bff;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 18px;
             border: none;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+    
+        #chatbot-btn:hover {
+            background-color: #0056b3;
+        }
+    
         #chatbox {
             display: none;
-            width: 250px;
-            height: 350px;
-            background: white;
-            border: 1px solid #ccc;
+            width: 280px;
+            height: 400px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             position: absolute;
             bottom: 40px;
             right: 0;
-            padding: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
+    
+        #chat-header {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    
         #chat-content {
-            height: 200px;
+            height: 220px;
             overflow-y: auto;
-            padding: 5px;
-            border-bottom: 1px solid #ccc;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
         }
+    
+        #chat-dropdown {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            color: #333;
+        }
+    
         .chat-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 5px;
+        }
+    
+        #send-btn, #clear-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        #send-btn:hover, #clear-btn:hover {
+            background-color: #218838;
+        }
+    
+        #clear-btn {
+            background-color: #dc3545;
+        }
+    
+        #clear-btn:hover {
+            background-color: #c82333;
+        }
+    
+        /* Chatbot UI Button Styling */
+        #chatbot-btn {
+            border-radius: 5px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -123,12 +184,11 @@
         </div>
         <div class="dropdown">
             <a href="#" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="profile.jpg" alt="User">
+                <img src="https://cdn-icons-png.flaticon.com/512/156/156930.png" class="img-fluid" width="20" height="15"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <span>{{ request.user.username }}</span>
             </a>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><a class="dropdown-item" href="{% url 'custom_logout' %}">Logout</a></li>
             </ul>
         </div>
@@ -152,62 +212,62 @@
             {% block content %}{% endblock %}
         </div>
     </div>
-     <!-- Chatbot UI -->
-     <div id="chatbot-container">
-        <button id="chatbot-btn">Chat</button>
-        <div id="chatbox">
-            <div id="chat-header">Chatbot</div>
-            <div id="chat-content"></div>
-            <select id="chat-dropdown">
-                <option value="">-- Select a question --</option>
-                <option value="apply_jobs">How do I apply for jobs?</option>
-                <option value="enroll_course">How do I enroll in a course?</option>
-                <option value="progress_check">What is my progress?</option>
-            </select>
-            <div class="chat-buttons">
-                <button id="send-btn">Send</button>
-                <button id="clear-btn">Clear Chat</button>
-            </div>
+    <!-- Chatbot UI -->
+<div id="chatbot-container">
+    <button id="chatbot-btn">Chat</button>
+    <div id="chatbox">
+        <div id="chat-header">Chatbot</div>
+        <div id="chat-content"></div>
+        <select id="chat-dropdown">
+            <option value="">-- Select a question --</option>
+            <option value="apply_jobs">How do I apply for jobs?</option>
+            <option value="enroll_course">How do I enroll in a course?</option>
+            <option value="progress_check">What is my progress?</option>
+        </select>
+        <div class="chat-buttons">
+            <button id="send-btn">Send</button>
+            <button id="clear-btn">Clear Chat</button>
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById("chatbot-btn").addEventListener("click", function() {
-            document.getElementById("chatbox").style.display = "block";
+<script>
+    document.getElementById("chatbot-btn").addEventListener("click", function() {
+        document.getElementById("chatbox").style.display = "block";
+    });
+
+    document.getElementById("send-btn").addEventListener("click", function() {
+        let dropdown = document.getElementById("chat-dropdown");
+        let selectedValue = dropdown.value;
+        let selectedText = dropdown.options[dropdown.selectedIndex].text;
+        
+        if (!selectedValue) {
+            alert("Please select a question.");
+            return;
+        }
+
+        fetch("/chat/chatbot-response/", {  // ✅ Ensure correct URL
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "message=" + encodeURIComponent(selectedValue)
+        })
+        .then(response => response.json())
+        .then(data => {
+            let chatContent = document.getElementById("chat-content");
+            chatContent.innerHTML += `<p><b>User:</b> ${selectedText}</p>`;
+            chatContent.innerHTML += `<p><b>Bot:</b> ${data.message}</p>`;
+            chatContent.scrollTop = chatContent.scrollHeight; // Auto-scroll
         });
+    });
 
-        document.getElementById("send-btn").addEventListener("click", function() {
-            let dropdown = document.getElementById("chat-dropdown");
-            let selectedValue = dropdown.value;
-            let selectedText = dropdown.options[dropdown.selectedIndex].text;
-            
-            if (!selectedValue) {
-                alert("Please select a question.");
-                return;
-            }
-
-            fetch("/chat/chatbot-response/", {  // ✅ Ensure correct URL
-    method: "POST",
-    headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-        "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "message=" + encodeURIComponent(selectedValue)
-})
-            .then(response => response.json())
-            .then(data => {
-                let chatContent = document.getElementById("chat-content");
-                chatContent.innerHTML += `<p><b>User:</b> ${selectedText}</p>`;
-                chatContent.innerHTML += `<p><b>Bot:</b> ${data.message}</p>`;
-                chatContent.scrollTop = chatContent.scrollHeight; // Auto-scroll
-            });
-        });
-
-        // Clear chat functionality
-        document.getElementById("clear-btn").addEventListener("click", function() {
-            document.getElementById("chat-content").innerHTML = "";
-        });
-    </script>
+    // Clear chat functionality
+    document.getElementById("clear-btn").addEventListener("click", function() {
+        document.getElementById("chat-content").innerHTML = "";
+    });
+</script>
 
     <script>
         function fetchUserStats() {

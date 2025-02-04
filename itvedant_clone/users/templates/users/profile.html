@@ -1,28 +1,40 @@
 {% extends "users/base.html" %}
 {% block content %}
 
-<h2>Profile</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center">Profile</h2>
 
-{% if messages %}
-  {% for message in messages %}
-    <p style="color: green;">{{ message }}</p>
-  {% endfor %}
-{% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success text-center">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
-<!-- Profile Update Form -->
-<form method="POST">
-    {% csrf_token %}
-    <h3>Update Profile</h3>
-    {{ profile_form.as_p }}
-    <button type="submit">Save Changes</button>
-</form>
+        <!-- Profile Update Form -->
+        <div class="mb-4">
+            <h3>Update Profile</h3>
+            <form method="POST" class="p-3 border rounded">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ profile_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+            </form>
+        </div>
 
-<!-- Password Change Form -->
-<h3>Change Password</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{ password_form.as_p }}
-    <button type="submit">Change Password</button>
-</form>
+        <!-- Password Change Form -->
+        <div class="mb-4">
+            <h3>Change Password</h3>
+            <form method="POST" class="p-3 border rounded">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ password_form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Change Password</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
