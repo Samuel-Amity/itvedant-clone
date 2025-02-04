@@ -1,0 +1,11 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+    <h1>Create Chapter</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Chapter</button>
+    </form>
+    <a href="{% url 'staff_dashboard' %}">Back to Staff Dashboard</a>
+{% endblock %}

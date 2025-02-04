@@ -1,0 +1,10 @@
+{% extends "users/base.html" %}
+
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Staff Dashboard</h1>
+    <a href="{% url 'create_chapter' %}">
+        <button>Create Chapter</button>
+    </a>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    <div>
+        <button id="start-chat-btn">Start Chat</button>
+
+        <div id="staff-list" style="display: none;">
+            <form method="POST">
+                {% csrf_token %}
+                <h3>Select Staff Member</h3>
+                <select name="staff_id">
+                    {% for staff in staff_list %}
+                        <option value="{{ staff.id }}">{{ staff.username }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Start Chat</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-chat-btn').onclick = function() {
+            document.getElementById('staff-list').style.display = 'block';
+        };
+    </script>
+{% endblock %}

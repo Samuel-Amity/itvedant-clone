@@ -1,0 +1,22 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    <h3>Chat with {{ chat_session.staff.username }}</h3>
+    
+    <div id="chat-box">
+        {% for message in messages %}
+            <div class="message">
+                <strong>{{ message.sender.username }}:</strong> {{ message.message }}
+                <span class="timestamp">{{ message.timestamp }}</span>
+            </div>
+        {% empty %}
+            <p>No messages yet.</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="message" placeholder="Type your message..." rows="4"></textarea>
+        <button type="submit">Send</button>
+    </form>
+{% endblock %}

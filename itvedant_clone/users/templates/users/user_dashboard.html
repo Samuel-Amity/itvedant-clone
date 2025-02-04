@@ -1,0 +1,15 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+    <h2>Your User Dashboard</h2>
+    <h3>Your Courses</h3>
+    <ul>
+        {% for course in courses %}
+            <li>
+                <a href="{% url 'course_detail' course.id %}">{{ course.title }}</a>
+                ({{ progress_data|default:0 }}% completed)
+                
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

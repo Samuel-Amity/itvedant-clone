@@ -1,0 +1,92 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+    <!-- ✅ Success Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(function() {
+            document.querySelector(".messages").style.display = "none";
+        }, 3000); // Hide message after 3 seconds
+    </script>
+    {% endif %}
+
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+
+    <h2>Chapters</h2>
+
+    {% for chapter in chapters %}
+    <div>
+        <button class="chapter-button" onclick="toggleDropdown('{{ chapter.id }}')">
+            {{ chapter.title }}
+        </button>
+        <div id="dropdown-{{ chapter.id }}" class="chapter-content" style="display: none;">
+            <p>{{ chapter.content }}</p>
+            <h3>Question: {{ chapter.question }}</h3>
+
+            <form method="POST" class="answer-form" data-chapter-id="{{ chapter.id }}">
+                {% csrf_token %}
+                <label for="user_answer_{{ chapter.id }}">Your Answer:</label>
+                <input type="text" id="user_answer_{{ chapter.id }}" name="user_answer" required>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+
+            <div id="feedback-{{ chapter.id }}" class="feedback"></div> <!-- Feedback section -->
+
+            {% if chapter.hint %}
+            <p><strong>Hint:</strong> {{ chapter.hint }}</p>
+            {% endif %}
+
+            <!-- ✅ Mark as Done Button -->
+            <form method="POST" action="{% url 'mark_chapter_complete' chapter.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-done">Mark as Done</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById('dropdown-' + id);
+            dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+        }
+
+        // ✅ AJAX for Answer Submission
+        document.querySelectorAll('.answer-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const chapterId = form.getAttribute('data-chapter-id');
+                const userAnswer = form.querySelector('[name="user_answer"]').value;
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value
+                    },
+                    body: new URLSearchParams({
+                        'chapter_id': chapterId,
+                        'user_answer': userAnswer
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const feedbackElement = document.getElementById('feedback-' + chapterId);
+                    feedbackElement.innerHTML = data.correct
+                        ? '<p style="color: green;">Correct!</p>'
+                        : '<p style="color: red;">Incorrect. Try again!</p>';
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+{% endblock %}

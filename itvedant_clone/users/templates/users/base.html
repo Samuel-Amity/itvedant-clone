@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background-color: #212529;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        .sidebar a {
+            color: rgb(20, 201, 44);
+            text-decoration: none;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 5px;
+        }
+        .sidebar a:hover, .sidebar .active {
+            background-color: #0d6efd;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: 280px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 280px;
+            right: 0;
+            z-index: 1030;
+        }
+        .content-container {
+            margin-top: 60px;
+        }
+        .sidebar .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-top: 1px solid #495057;
+        }
+        .sidebar .user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+    </style>
+    <style>
+        /* Chatbot Styles */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+        #chatbot-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        #chatbox {
+            display: none;
+            width: 250px;
+            height: 350px;
+            background: white;
+            border: 1px solid #ccc;
+            position: absolute;
+            bottom: 40px;
+            right: 0;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        #chat-content {
+            height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .chat-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar d-flex flex-column">
+        <div>
+            <h4 class="mb-4" style="display: flex; align-items: center;">
+                <a href="{% url 'home' %}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                    <i class="fa-brands fa-connectdevelop" style="margin-right: 8px;"></i> CRAW
+                </a>
+            </h4>
+            
+            <a href="{% url 'user_dashboard' %}" class="{% if request.resolver_match.url_name == 'user_dashboard' %}active{% endif %}"><i class="fa fa-home"></i> Home</a>
+            <a href="{% url 'course_list' %}"><i class="fa fa-chart-bar"></i> Courses</a>
+            <a href="{% url 'job_list' %}"><i class="fa fa-table"></i> Job Openings</a>
+            <a href="{% url 'leaderboard' %}"><i class="fa fa-box"></i> Leaderboard</a>
+            <a href="{% url 'public_chat' %}"><i class="fa fa-user"></i> Public Chat</a>
+        </div>
+        <div class="dropdown">
+            <a href="#" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="profile.jpg" alt="User">
+                <span>{{ request.user.username }}</span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_logout' %}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand">Welcome, <strong>{{ request.user.username }}</strong></span>
+                <div class="ms-auto">
+                    <a href="{% url 'start_chat' %}" class="btn btn-warning" role="button">HelpDesk</a>
+            
+                    <!-- 🔹 User Stats Button -->
+                    <button id="user-stats-btn" class="btn btn-success">
+                        Users: <span id="total-users">0</span> | Online: <span id="online-users">0</span>
+                    </button>
+            
+                </div>
+            </div>
+        </nav>
+        <div class="content-container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+     <!-- Chatbot UI -->
+     <div id="chatbot-container">
+        <button id="chatbot-btn">Chat</button>
+        <div id="chatbox">
+            <div id="chat-header">Chatbot</div>
+            <div id="chat-content"></div>
+            <select id="chat-dropdown">
+                <option value="">-- Select a question --</option>
+                <option value="apply_jobs">How do I apply for jobs?</option>
+                <option value="enroll_course">How do I enroll in a course?</option>
+                <option value="progress_check">What is my progress?</option>
+            </select>
+            <div class="chat-buttons">
+                <button id="send-btn">Send</button>
+                <button id="clear-btn">Clear Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("chatbot-btn").addEventListener("click", function() {
+            document.getElementById("chatbox").style.display = "block";
+        });
+
+        document.getElementById("send-btn").addEventListener("click", function() {
+            let dropdown = document.getElementById("chat-dropdown");
+            let selectedValue = dropdown.value;
+            let selectedText = dropdown.options[dropdown.selectedIndex].text;
+            
+            if (!selectedValue) {
+                alert("Please select a question.");
+                return;
+            }
+
+            fetch("/chat/chatbot-response/", {  // ✅ Ensure correct URL
+    method: "POST",
+    headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "message=" + encodeURIComponent(selectedValue)
+})
+            .then(response => response.json())
+            .then(data => {
+                let chatContent = document.getElementById("chat-content");
+                chatContent.innerHTML += `<p><b>User:</b> ${selectedText}</p>`;
+                chatContent.innerHTML += `<p><b>Bot:</b> ${data.message}</p>`;
+                chatContent.scrollTop = chatContent.scrollHeight; // Auto-scroll
+            });
+        });
+
+        // Clear chat functionality
+        document.getElementById("clear-btn").addEventListener("click", function() {
+            document.getElementById("chat-content").innerHTML = "";
+        });
+    </script>
+
+    <script>
+        function fetchUserStats() {
+            fetch("/users/user-stats/")  // Ensure this URL matches your URL pattern
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("total-users").textContent = data.total_users;
+                    document.getElementById("online-users").textContent = data.online_users;
+                })
+                .catch(error => console.error("Error fetching user stats:", error));
+        }
+    
+        // Fetch stats every 10 seconds
+        setInterval(fetchUserStats, 10000);
+        fetchUserStats();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
