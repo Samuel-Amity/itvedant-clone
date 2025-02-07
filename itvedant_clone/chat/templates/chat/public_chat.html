@@ -9,12 +9,14 @@
         <h2 class="text-center mb-4">Public Chat</h2>
 
         <div id="chat-box" class="border p-3 mb-4" style="max-height: 400px; overflow-y: auto;">
-            {% for message in messages %}
+            
+            {% for message in messages.reverse %}
                 <div class="message mb-3">
                     <strong>{{ message.user.username }}:</strong> {{ message.message }} <br>
                     <small class="text-muted">{{ message.timestamp }}</small>
                 </div>
             {% endfor %}
+
         </div>
 
         <form method="POST">

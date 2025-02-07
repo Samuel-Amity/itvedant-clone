@@ -26,6 +26,11 @@ SECRET_KEY = 'django-insecure-c8796^iu+rh%a#%8b^c@xml_aktq=ub$tik5%%n1k2m1x%g^^y
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = []
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# ALLOWED_HOSTS = ['192.168.0.17', '192.168.0.17.nip.io', 'localhost']
+# CSRF_TRUSTED_ORIGINS = ['http://192.168.0.17.nip.io']
 
 
 # Application definition
@@ -41,8 +46,34 @@ INSTALLED_APPS = [
     'users',
     'courses',
     'chat',
-    'dashboard',
+    'dashboard',# Other installed apps
+    'django.contrib.sites',  
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+SITE_ID = 1  # Required for allauth
+SOCIALACCOUNT_QUERY_EMAIL = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_REDIRECT_URL = '/'  # Redirect after successful login
+LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
+# freeytrial8 se linked google cloud https://console.cloud.google.com/apis/credentials?project=my-project-django-450014
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': 'put here',
+            'secret': 'insert here',
+            'key': ''
+        }
+    }
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +83,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+
 ]
 
 ROOT_URLCONF = 'itvedant_clone.urls'

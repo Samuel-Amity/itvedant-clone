@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),  
     path('', home_redirect, name='home'),
     path('accounts/', include('django.contrib.auth.urls')),  # Built-in auth URLs]
+        path('accounts/', include('allauth.urls')),  # Django Allauth URLs
     path('users/', include('users.urls')),  # Users & staff routes
     path("courses/", include("courses.urls")), #course
     path('chat/', include('chat.urls')), #chat
