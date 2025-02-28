@@ -8,6 +8,7 @@ itvedant Clone - Features Overview
    - Users can sign up and log in.
    - Custom user and staff dashboards.
    - Role-based access: Users, Staff, and Admin.
+   - login w google nlp.io
 
 2. Course Management
    - Courses contain multiple chapters.
